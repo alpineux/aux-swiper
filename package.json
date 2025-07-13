@@ -2,6 +2,7 @@
   "name": "aux-swiper",
   "version": "1.0.0",
   "description": "Utilities build for clients to use SwiperJS in Webflow.",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.umd.js",
