@@ -3,11 +3,43 @@
   "version": "1.0.0",
   "description": "Utilities build for clients to use SwiperJS in Webflow.",
   "main": "dist/index.js",
-  "types": "dist/types.d.ts",
-  "files": ["/dist"],
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.umd.js",
+  "unpkg": "dist/index.umd.min.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
+    "build": "rollup -c",
+    "build:dev": "rollup -c --environment NODE_ENV:development",
+    "build:prod": "rollup -c --environment NODE_ENV:production",
+    "dev": "rollup -c -w",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build:prod",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/node": "^20.8.0",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.1.4",
+    "rollup-plugin-terser": "^7.0.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "swiper": ">=8.0.0"
+  },
+  "keywords": [
+    "swiper",
+    "carousel",
+    "slider",
+    "webflow",
+    "data-attributes",
+    "vanilla-js",
+    "typescript"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alpineux/aux-swiper.git"

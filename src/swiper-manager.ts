@@ -1,126 +1,28 @@
 /**
- * Swiper Init Data Attributes
- *
- * Use with the AUX Design System in Webflow,
- * to easily manage SwiperJS sliders
- *
- * @version 1.0.0
- * @license MIT
- * @author AlpineUX / AUX Design System
- * @see https://github.com/johnlomat/swiper-init-data-attributes
+ * SwiperManager - Core functionality for aux-swiper
  */
 
-// Declare Swiper as a global constructor (loaded via script tag)
-declare global {
-    interface Window {
-        swiperInstances: Record<string, any>;
-        cleanupSwipers?: () => void;
-        Swiper?: any; // Optional in case it's not loaded yet
-    }
-
-    // Declare global Swiper constructor
-    const Swiper: {
-        new (element: HTMLElement, config: any): any;
-    } | undefined;
-}
-
-// Type definitions
-interface SwiperConfig {
-    slidesPerView?: number | string;
-    centeredSlides?: boolean;
-    spaceBetween?: number;
-    loop?: boolean;
-    speed?: number;
-    allowTouchMove?: boolean;
-    grabCursor?: boolean;
-    freeMode?: boolean;
-    watchSlidesProgress?: boolean;
-    slidesOffsetBefore?: number;
-    slidesOffsetAfter?: number;
-    updateOnWindowResize?: boolean;
-    observer?: boolean;
-    observeParents?: boolean;
-    observeSlideChildren?: boolean;
-    autoplay?: {
-        delay?: number;
-        disableOnInteraction?: boolean;
-        pauseOnMouseEnter?: boolean;
-    };
-    navigation?: {
-        prevEl?: HTMLElement | null;
-        nextEl?: HTMLElement | null;
-        hideOnClick?: boolean;
-    };
-    pagination?: {
-        el?: HTMLElement | null;
-        clickable?: boolean;
-        type?: string;
-        dynamicBullets?: boolean;
-        hideOnClick?: boolean;
-    };
-    scrollbar?: {
-        el?: HTMLElement | null;
-        draggable?: boolean;
-        hide?: boolean;
-    };
-    breakpoints?: Record<number, Partial<SwiperConfig>>;
-    thumbs?: {
-        swiper?: any;
-    };
-    a11y?: {
-        enabled?: boolean;
-        prevSlideMessage?: string;
-        nextSlideMessage?: string;
-        firstSlideMessage?: string;
-        lastSlideMessage?: string;
-    };
-}
-
-interface NavigationElements {
-    prevButton: HTMLElement | null;
-    nextButton: HTMLElement | null;
-}
-
-interface SwiperAPI {
-    init: () => void;
-    destroy: () => void;
-    getInstance: () => any | null;
-    getThumbsInstance: () => any | null;
-    refresh: () => void;
-    update: () => void;
-    updateSize: () => void;
-    updateSlides: () => void;
-}
-
-interface BreakpointMap {
-    xs: number;
-    sm: number;
-    md: number;
-    lg: number;
-    xl: number;
-    '2xl': number;
-}
-
-type BreakpointSize = keyof BreakpointMap;
-
-// Extend HTMLElement to include our custom properties
-declare global {
-    interface HTMLElement {
-        swiperAPI?: SwiperAPI;
-    }
-}
+import type {
+    SwiperConfig,
+    SwiperAPI,
+    NavigationElements,
+    BreakpointMap,
+    BreakpointSize
+} from './types';
 
 // Use WeakMap for better memory management and privacy
 const swiperInstancesMap = new WeakMap<HTMLElement, any>();
 const resizeObserverMap = new WeakMap<HTMLElement, ResizeObserver>();
 
 // Store all swiper instances for potential external access (keeping for backward compatibility)
-window.swiperInstances = window.swiperInstances || {};
+if (typeof window !== 'undefined') {
+    window.swiperInstances = window.swiperInstances || {};
+}
 
 /**
  * Utility functions
  */
-const utils = {
+export const utils = {
     // Decode HTML entities in breakpoints string
     decodeHTMLEntities(text: string | null): string | null {
         if (!text) return null;
@@ -178,7 +80,7 @@ const utils = {
 /**
  * SwiperManager class for better organization and memory management
  */
-class SwiperManager {
+export class SwiperManager {
     private element: HTMLElement;
     private index: number;
     private uniqueId: string;
@@ -434,7 +336,9 @@ class SwiperManager {
                 mainConfig.thumbs = { swiper: this.thumbsInstance };
 
                 // Store thumbs instance for backward compatibility
-                window.swiperInstances[`${this.uniqueId}-thumbs`] = this.thumbsInstance;
+                if (typeof window !== 'undefined') {
+                    window.swiperInstances[`${this.uniqueId}-thumbs`] = this.thumbsInstance;
+                }
             }
 
             // Create and store the Swiper instance
@@ -444,7 +348,9 @@ class SwiperManager {
             swiperInstancesMap.set(this.element, this.swiperInstance);
 
             // Store in window for backward compatibility
-            window.swiperInstances[this.uniqueId] = this.swiperInstance;
+            if (typeof window !== 'undefined') {
+                window.swiperInstances[this.uniqueId] = this.swiperInstance;
+            }
 
             // Mark as initialized
             this.element.dataset.swiperInitialized = "true";
@@ -470,13 +376,17 @@ class SwiperManager {
             if (this.swiperInstance) {
                 this.swiperInstance.destroy(true, true);
                 swiperInstancesMap.delete(this.element);
-                delete window.swiperInstances[this.uniqueId];
+                if (typeof window !== 'undefined') {
+                    delete window.swiperInstances[this.uniqueId];
+                }
                 this.swiperInstance = null;
             }
 
             if (this.thumbsInstance) {
                 this.thumbsInstance.destroy(true, true);
-                delete window.swiperInstances[`${this.uniqueId}-thumbs`];
+                if (typeof window !== 'undefined') {
+                    delete window.swiperInstances[`${this.uniqueId}-thumbs`];
+                }
                 this.thumbsInstance = null;
             }
 
@@ -588,12 +498,14 @@ class SwiperManager {
 /**
  * Initialize all Swiper elements
  */
-function initializeSwipers(): void {
+export function initializeSwipers(): void {
     // Use modern DOM loading check
-    if (document.readyState === 'loading') {
+    if (typeof document !== 'undefined' && document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeSwipers);
         return;
     }
+
+    if (typeof document === 'undefined') return;
 
     const swiperElements = document.querySelectorAll<HTMLElement>(".swiper");
     const managers: SwiperManager[] = [];
@@ -608,20 +520,13 @@ function initializeSwipers(): void {
     });
 
     // Global cleanup function for proper memory management
-    window.cleanupSwipers = (): void => {
-        managers.forEach(manager => manager.cleanup());
-        managers.length = 0;
-    };
-
-    // Cleanup on page unload
     if (typeof window !== 'undefined') {
+        window.cleanupSwipers = (): void => {
+            managers.forEach(manager => manager.cleanup());
+            managers.length = 0;
+        };
+
+        // Cleanup on page unload
         window.addEventListener('beforeunload', window.cleanupSwipers);
     }
 }
-
-// Initialize when DOM is ready
-initializeSwipers();
-
-// Export for ES6 modules if needed
-export { SwiperManager, utils };
-export type { SwiperConfig, SwiperAPI, NavigationElements, BreakpointMap, BreakpointSize };
