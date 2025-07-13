@@ -1,0 +1,21 @@
+{
+  "name": "aux-swiper",
+  "version": "1.0.0",
+  "description": "Utilities build for clients to use SwiperJS in Webflow.",
+  "main": "dist/index.js",
+  "types": "dist/types.d.ts",
+  "files": ["/dist"],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alpineux/aux-swiper.git"
+  },
+  "author": "AlpineUX",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alpineux/aux-swiper/issues"
+  },
+  "homepage": "https://github.com/alpineux/aux-swiper#readme"
+}
