@@ -1,12 +1,12 @@
 /**
  * Swiper Init Data Attributes
  *
- * A lightweight utility to initialize Swiper instances using HTML data attributes.
- * Enables easy configuration of Swiper sliders without writing JavaScript code.
+ * Use with the AUX Design System in Webflow,
+ * to easily manage SwiperJS sliders
  *
- * @version 2.0.0
+ * @version 1.0.0
  * @license MIT
- * @author John Lomat
+ * @author AlpineUX / AUX Design System
  * @see https://github.com/johnlomat/swiper-init-data-attributes
  */
 
