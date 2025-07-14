@@ -1,6 +1,6 @@
-# AuxSwiper
+# AUXswiper
 
-A lightweight TypeScript utility library for initializing SwiperJS instances using HTML data attributes. Perfect for Webflow projects and no-code environments.
+A lightweight TypeScript utility library for initializing SwiperJS instances using HTML data attributes. Built for Webflow projects and no-code environments.
 
 ## Features
 
@@ -13,7 +13,7 @@ A lightweight TypeScript utility library for initializing SwiperJS instances usi
 
 ## Quick Start
 
-### 1. Include SwiperJS and AuxSwiper
+### 1. Include SwiperJS and AUXswiper
 
 ```html
 <!-- Swiper CSS -->
@@ -32,19 +32,9 @@ A lightweight TypeScript utility library for initializing SwiperJS instances usi
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <!-- AuxSwiper -->
-<script src="https://unpkg.com/aux-swiper@latest/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/alpineux/aux-swiper@latest/dist/index.umd.min.js"></script>
 ```
 
-### 2. Or install via npm
-
-```bash
-npm install aux-swiper
-```
-
-```javascript
-import 'aux-swiper';
-// Automatically initializes all .swiper elements
-```
 
 ## Data Attributes
 
@@ -144,22 +134,6 @@ console.log(window.swiperInstances);
 window.cleanupSwipers();
 ```
 
-### TypeScript Support
-
-```typescript
-import { SwiperManager, utils } from 'aux-swiper';
-import type { SwiperConfig, SwiperAPI } from 'aux-swiper';
-
-// Create custom manager
-const manager = new SwiperManager(element, 0);
-
-// Type-safe configuration
-const config: SwiperConfig = {
-  slidesPerView: 3,
-  spaceBetween: 20
-};
-```
-
 ## Browser Support
 
 - Chrome 63+
@@ -177,4 +151,5 @@ const config: SwiperConfig = {
 
 ## License
 
-MIT © [AlpineUX](https://github.com/alpineux)
+MIT © [AlpineUX](https://alpineux.com)
+[https://alpineux.com](https://alpineux.com)
