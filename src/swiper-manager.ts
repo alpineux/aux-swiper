@@ -134,15 +134,31 @@ export class SwiperManager {
 
         // Use more robust selectors and error handling
         try {
-            prevButton = prevSelector ?
-                document.querySelector<HTMLElement>(prevSelector) :
-                this.element.closest('.swiper-container, .swiper-wrapper')?.parentElement?.querySelector<HTMLElement>('.swiper-button-prev') ||
-                this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-prev') || null;
+            if (prevSelector) {
+                // Custom selector provided
+                prevButton = document.querySelector<HTMLElement>(prevSelector);
+            } else {
+                // Look for navigation buttons within this swiper's context
+                // First check within the swiper element itself
+                prevButton = this.element.querySelector<HTMLElement>('.swiper-button-prev, .prev-btn') ||
+                    // Then check within the parent container
+                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-prev, .prev-btn') ||
+                    // Finally check siblings of the swiper
+                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-prev, .prev-btn') || null;
+            }
 
-            nextButton = nextSelector ?
-                document.querySelector<HTMLElement>(nextSelector) :
-                this.element.closest('.swiper-container, .swiper-wrapper')?.parentElement?.querySelector<HTMLElement>('.swiper-button-next') ||
-                this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-next') || null;
+            if (nextSelector) {
+                // Custom selector provided
+                nextButton = document.querySelector<HTMLElement>(nextSelector);
+            } else {
+                // Look for navigation buttons within this swiper's context
+                // First check within the swiper element itself
+                nextButton = this.element.querySelector<HTMLElement>('.swiper-button-next, .next-btn') ||
+                    // Then check within the parent container
+                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-next, .next-btn') ||
+                    // Finally check siblings of the swiper
+                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-next, .next-btn') || null;
+            }
         } catch (error) {
             console.warn('Error finding navigation elements:', error);
         }

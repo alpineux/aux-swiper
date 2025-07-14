@@ -88,20 +88,28 @@
             return null;
         }
         getNavigationElements() {
-            var _a, _b, _c, _d, _e, _f;
+            var _a, _b, _c, _d;
             const prevSelector = this.element.getAttribute("data-nav-prev");
             const nextSelector = this.element.getAttribute("data-nav-next");
             let prevButton = null;
             let nextButton = null;
             try {
-                prevButton = prevSelector ?
-                    document.querySelector(prevSelector) :
-                    ((_b = (_a = this.element.closest('.swiper-container, .swiper-wrapper')) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.querySelector('.swiper-button-prev')) ||
-                        ((_c = this.element.parentElement) === null || _c === void 0 ? void 0 : _c.querySelector('.swiper-button-prev')) || null;
-                nextButton = nextSelector ?
-                    document.querySelector(nextSelector) :
-                    ((_e = (_d = this.element.closest('.swiper-container, .swiper-wrapper')) === null || _d === void 0 ? void 0 : _d.parentElement) === null || _e === void 0 ? void 0 : _e.querySelector('.swiper-button-next')) ||
-                        ((_f = this.element.parentElement) === null || _f === void 0 ? void 0 : _f.querySelector('.swiper-button-next')) || null;
+                if (prevSelector) {
+                    prevButton = document.querySelector(prevSelector);
+                }
+                else {
+                    prevButton = this.element.querySelector('.swiper-button-prev, .prev-btn') ||
+                        ((_a = this.element.parentElement) === null || _a === void 0 ? void 0 : _a.querySelector('.swiper-button-prev, .prev-btn')) ||
+                        ((_b = this.element.parentElement) === null || _b === void 0 ? void 0 : _b.querySelector('.swiper-button-prev, .prev-btn')) || null;
+                }
+                if (nextSelector) {
+                    nextButton = document.querySelector(nextSelector);
+                }
+                else {
+                    nextButton = this.element.querySelector('.swiper-button-next, .next-btn') ||
+                        ((_c = this.element.parentElement) === null || _c === void 0 ? void 0 : _c.querySelector('.swiper-button-next, .next-btn')) ||
+                        ((_d = this.element.parentElement) === null || _d === void 0 ? void 0 : _d.querySelector('.swiper-button-next, .next-btn')) || null;
+                }
             }
             catch (error) {
                 console.warn('Error finding navigation elements:', error);
