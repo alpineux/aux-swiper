@@ -268,6 +268,14 @@
                 firstSlideMessage: el.getAttribute("data-a11y-first-message") || 'This is the first slide',
                 lastSlideMessage: el.getAttribute("data-a11y-last-message") || 'This is the last slide'
             };
+            if (utils.getBooleanAttribute(el, "data-mousewheel", false)) {
+                config.mousewheel = {
+                    forceToAxis: utils.getBooleanAttribute(el, "data-mousewheel-force-to-axis", true),
+                    sensitivity: utils.getNumberAttribute(el, "data-mousewheel-sensitivity", 1),
+                    releaseOnEdges: utils.getBooleanAttribute(el, "data-mousewheel-release-on-edges", false),
+                    invert: utils.getBooleanAttribute(el, "data-mousewheel-invert", false)
+                };
+            }
             return config;
         }
         initializeSwiper() {

@@ -47,6 +47,12 @@ export interface SwiperConfig {
         firstSlideMessage?: string;
         lastSlideMessage?: string;
     };
+    mousewheel?: {
+        forceToAxis?: boolean;
+        sensitivity?: number;
+        releaseOnEdges?: boolean;
+        invert?: boolean;
+    };
 }
 export interface NavigationElements {
     prevButton: HTMLElement | null;
