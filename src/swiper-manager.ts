@@ -1,5 +1,7 @@
 /**
  * SwiperManager - Core functionality for aux-swiper
+ * ALPINEUX / AUX Design System
+ * https://alpineux.com
  */
 
 import type {
