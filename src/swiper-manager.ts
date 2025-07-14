@@ -126,41 +126,99 @@ export class SwiperManager {
      * Get navigation elements with improved selector handling
      */
     private getNavigationElements(): NavigationElements {
+        const navId = this.element.getAttribute("data-nav-id");
         const prevSelector = this.element.getAttribute("data-nav-prev");
         const nextSelector = this.element.getAttribute("data-nav-next");
 
         let prevButton: HTMLElement | null = null;
         let nextButton: HTMLElement | null = null;
 
-        // Use more robust selectors and error handling
         try {
-            if (prevSelector) {
-                // Custom selector provided
-                prevButton = document.querySelector<HTMLElement>(prevSelector);
-            } else {
-                // Look for navigation buttons within this swiper's context
-                // First check within the swiper element itself
-                prevButton = this.element.querySelector<HTMLElement>('.swiper-button-prev, .prev-btn') ||
-                    // Then check within the parent container
-                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-prev, .prev-btn') ||
-                    // Finally check siblings of the swiper
-                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-prev, .prev-btn') || null;
+            // Check for the new simplified data-nav-id approach first
+            if (navId) {
+                prevButton = document.querySelector<HTMLElement>(`[data-trigger-prev="${navId}"]`);
+                nextButton = document.querySelector<HTMLElement>(`[data-trigger-next="${navId}"]`);
             }
+            // Fallback to individual prev/next selectors for backward compatibility
+            else if (prevSelector || nextSelector) {
+                if (prevSelector) {
+                    // Check if it's a custom data attribute name or a CSS selector
+                    if (prevSelector.startsWith('.') || prevSelector.startsWith('#') || prevSelector.includes(' ')) {
+                        // Traditional CSS selector
+                        prevButton = document.querySelector<HTMLElement>(prevSelector);
+                    } else {
+                        // Custom data attribute - find button with matching data-trigger-prev
+                        prevButton = document.querySelector<HTMLElement>(`[data-trigger-prev="${prevSelector}"]`);
+                    }
+                }
 
-            if (nextSelector) {
-                // Custom selector provided
-                nextButton = document.querySelector<HTMLElement>(nextSelector);
-            } else {
-                // Look for navigation buttons within this swiper's context
-                // First check within the swiper element itself
-                nextButton = this.element.querySelector<HTMLElement>('.swiper-button-next, .next-btn') ||
-                    // Then check within the parent container
-                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-next, .next-btn') ||
-                    // Finally check siblings of the swiper
-                    this.element.parentElement?.querySelector<HTMLElement>('.swiper-button-next, .next-btn') || null;
+                if (nextSelector) {
+                    // Check if it's a custom data attribute name or a CSS selector
+                    if (nextSelector.startsWith('.') || nextSelector.startsWith('#') || nextSelector.includes(' ')) {
+                        // Traditional CSS selector
+                        nextButton = document.querySelector<HTMLElement>(nextSelector);
+                    } else {
+                        // Custom data attribute - find button with matching data-trigger-next
+                        nextButton = document.querySelector<HTMLElement>(`[data-trigger-next="${nextSelector}"]`);
+                    }
+                }
+            }
+            // Default behavior - look for navigation buttons within this swiper instance
+            else {
+                // Look for navigation buttons ONLY within this specific swiper instance
+                // Search only within this swiper element, not globally
+                prevButton = this.element.querySelector<HTMLElement>('.swiper-button-prev, .prev-btn');
+                nextButton = this.element.querySelector<HTMLElement>('.swiper-button-next, .next-btn');
+
+                // If not found within swiper, check if parent container has navigation
+                // but make sure it's the immediate parent to avoid conflicts
+                if (!prevButton || !nextButton) {
+                    const immediateParent = this.element.parentElement;
+                    if (immediateParent) {
+                        if (!prevButton) {
+                            // Only get buttons that are direct children of the parent
+                            // and not children of other swipers
+                            const candidates = immediateParent.querySelectorAll<HTMLElement>('.swiper-button-prev, .prev-btn');
+                            for (const candidate of candidates) {
+                                // Make sure this button is not inside another swiper
+                                const candidateSwiper = candidate.closest('.swiper');
+                                if (!candidateSwiper || candidateSwiper === this.element) {
+                                    prevButton = candidate;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!nextButton) {
+                            // Only get buttons that are direct children of the parent
+                            // and not children of other swipers
+                            const candidates = immediateParent.querySelectorAll<HTMLElement>('.swiper-button-next, .next-btn');
+                            for (const candidate of candidates) {
+                                // Make sure this button is not inside another swiper
+                                const candidateSwiper = candidate.closest('.swiper');
+                                if (!candidateSwiper || candidateSwiper === this.element) {
+                                    nextButton = candidate;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         } catch (error) {
             console.warn('Error finding navigation elements:', error);
+        }
+
+        // Debug logging to help troubleshoot
+        if (typeof console !== 'undefined' && console.debug) {
+            console.debug(`Swiper ${this.uniqueId} found navigation:`, {
+                prevButton: prevButton?.className || 'none',
+                nextButton: nextButton?.className || 'none',
+                navId: navId,
+                prevSelector: prevSelector,
+                nextSelector: nextSelector,
+                swiperElement: this.element
+            });
         }
 
         return { prevButton, nextButton };

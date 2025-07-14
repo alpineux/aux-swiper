@@ -82,31 +82,76 @@ class SwiperManager {
         return null;
     }
     getNavigationElements() {
-        var _a, _b, _c, _d;
+        const navId = this.element.getAttribute("data-nav-id");
         const prevSelector = this.element.getAttribute("data-nav-prev");
         const nextSelector = this.element.getAttribute("data-nav-next");
         let prevButton = null;
         let nextButton = null;
         try {
-            if (prevSelector) {
-                prevButton = document.querySelector(prevSelector);
+            if (navId) {
+                prevButton = document.querySelector(`[data-trigger-prev="${navId}"]`);
+                nextButton = document.querySelector(`[data-trigger-next="${navId}"]`);
+            }
+            else if (prevSelector || nextSelector) {
+                if (prevSelector) {
+                    if (prevSelector.startsWith('.') || prevSelector.startsWith('#') || prevSelector.includes(' ')) {
+                        prevButton = document.querySelector(prevSelector);
+                    }
+                    else {
+                        prevButton = document.querySelector(`[data-trigger-prev="${prevSelector}"]`);
+                    }
+                }
+                if (nextSelector) {
+                    if (nextSelector.startsWith('.') || nextSelector.startsWith('#') || nextSelector.includes(' ')) {
+                        nextButton = document.querySelector(nextSelector);
+                    }
+                    else {
+                        nextButton = document.querySelector(`[data-trigger-next="${nextSelector}"]`);
+                    }
+                }
             }
             else {
-                prevButton = this.element.querySelector('.swiper-button-prev, .prev-btn') ||
-                    ((_a = this.element.parentElement) === null || _a === void 0 ? void 0 : _a.querySelector('.swiper-button-prev, .prev-btn')) ||
-                    ((_b = this.element.parentElement) === null || _b === void 0 ? void 0 : _b.querySelector('.swiper-button-prev, .prev-btn')) || null;
-            }
-            if (nextSelector) {
-                nextButton = document.querySelector(nextSelector);
-            }
-            else {
-                nextButton = this.element.querySelector('.swiper-button-next, .next-btn') ||
-                    ((_c = this.element.parentElement) === null || _c === void 0 ? void 0 : _c.querySelector('.swiper-button-next, .next-btn')) ||
-                    ((_d = this.element.parentElement) === null || _d === void 0 ? void 0 : _d.querySelector('.swiper-button-next, .next-btn')) || null;
+                prevButton = this.element.querySelector('.swiper-button-prev, .prev-btn');
+                nextButton = this.element.querySelector('.swiper-button-next, .next-btn');
+                if (!prevButton || !nextButton) {
+                    const immediateParent = this.element.parentElement;
+                    if (immediateParent) {
+                        if (!prevButton) {
+                            const candidates = immediateParent.querySelectorAll('.swiper-button-prev, .prev-btn');
+                            for (const candidate of candidates) {
+                                const candidateSwiper = candidate.closest('.swiper');
+                                if (!candidateSwiper || candidateSwiper === this.element) {
+                                    prevButton = candidate;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!nextButton) {
+                            const candidates = immediateParent.querySelectorAll('.swiper-button-next, .next-btn');
+                            for (const candidate of candidates) {
+                                const candidateSwiper = candidate.closest('.swiper');
+                                if (!candidateSwiper || candidateSwiper === this.element) {
+                                    nextButton = candidate;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         catch (error) {
             console.warn('Error finding navigation elements:', error);
+        }
+        if (typeof console !== 'undefined' && console.debug) {
+            console.debug(`Swiper ${this.uniqueId} found navigation:`, {
+                prevButton: (prevButton === null || prevButton === void 0 ? void 0 : prevButton.className) || 'none',
+                nextButton: (nextButton === null || nextButton === void 0 ? void 0 : nextButton.className) || 'none',
+                navId: navId,
+                prevSelector: prevSelector,
+                nextSelector: nextSelector,
+                swiperElement: this.element
+            });
         }
         return { prevButton, nextButton };
     }
